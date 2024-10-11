@@ -1,0 +1,55 @@
+name: AI Integration
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ai-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Cache Docker layers to improve performance (optional)
+      - name: Set up Docker cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # Step 3: Run CodeBERT analysis
+      - name: Run CodeBERT analysis
+        uses: docker://codebert/codebert:latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CODEBERT_API_KEY: ${{ secrets.CODEBERT_API_KEY }}
+        # Add some error handling
+        continue-on-error: false
+
+      # Step 4: Check if analysis results exist and exit if they don't
+      - name: Verify analysis results
+        run: |
+          if [ ! -f analysis-results.json ]; then
+            echo "Analysis results not found!"
+            exit 1
+          fi
+
+      # Step 5: Upload the results as a log file for better debugging
+      - name: Upload analysis results
+        uses: actions/upload-artifact@v3
+        with:
+          name: analysis-results
+          path: analysis-results.log
+
+  # Step 6: Optional notification step (e.g., Slack or email)
+  notify:
+    runs-on: ubuntu-latest
+    if: failure()  # Only notify if the AI analysis fails
+    steps:
+      - name: Notify team
+        run: echo "The AI analysis has failed. Please check the logs."
+
