@@ -1,0 +1,33 @@
+name: Deploy to Vertex AI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          project_id: "YOUR_PROJECT_ID" # Replace with your Google Cloud project ID
+          export_default_credentials: true
+
+      # Step 3: Deploy Model to Vertex AI
+      - name: Deploy Model to Vertex AI
+        run: |
+          gcloud ai custom-jobs create \
+            --region=us-central1 \
+            --display-name="vertex-ai-deployment-job" \
+            --python-package-uris="gs://cultragroundzero/training_script.py" \
+            --python-module="main_script" \
+            --args="--training_steps=1000,--learning_rate=0.001"
