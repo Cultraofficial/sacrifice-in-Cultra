@@ -3,7 +3,7 @@ name: Deploy to Vertex AI
 on:
   push:
     branches:
-      - main  # Change to the branch you want to trigger deployments
+      - main  # This specifies that deployments happen on code pushes to the main branch
 
 jobs:
   deploy:
@@ -20,7 +20,9 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         project_id: gen-lang-client-0492208227
 
-    - name: Deploy to Vertex AI
+    - name: Deploy Model to Vertex AI
       run: |
-        # Add your Vertex AI deployment commands here
-        # Example: gcloud ai custom-jobs create --region=us-central1 ...
+        gcloud ai custom-jobs create \
+          --region=us-central1 \
+          --display-name="vertex-ai-deployment-job" \
+          --config="gs://cultra_official/config.yaml"  # Adjust as needed
