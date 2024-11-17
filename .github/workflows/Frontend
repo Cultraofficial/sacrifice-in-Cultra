@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model Interaction</title>
+</head>
+<body>
+    <h1>AI Model Prediction</h1>
+    <input type="text" id="inputData" placeholder="Enter input for model">
+    <button onclick="predict()">Predict</button>
+    <p id="result"></p>
+
+    <script>
+        async function predict() {
+            const inputData = document.getElementById('inputData').value;
+            const response = await fetch('/predict/MODEL_ID', {  // Replace MODEL_ID with actual model endpoint ID
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ input_data: inputData })
+            });
+            const result = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(result);
+        }
+    </script>
+</body>
+</html>
