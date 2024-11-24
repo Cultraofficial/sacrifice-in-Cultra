@@ -10,23 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: |
-        pip install psycopg2-binary
-        pip install requests
-        pip install supabase-py
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+          pip install requests
+          pip install supabase
 
-    - name: Connect to Supabase and run setup script
-      env:
-        SUPABASE_URL: https://yfzraagzlhizscnklzig.supabase.co
-        SUPABASE_KEY: 8f26f34a47c1613c625ca89554d8dc49
-      run: |
-        python setup_script.py
+      - name: Run Supabase deployment script
+        env:
+          SUPABASE_URL: https://yfzraagzlhizscnklzig.supabase.co
+          SUPABASE_KEY: 8f26f34a47c1613c625ca89554d8dc49
+          SUPABASE_SECRET: 212cb29a93678cb12e3711ad1315de7d58321342440b04fcaa91f5f733bebe9c
+        run: |
+          python setup_script.py
